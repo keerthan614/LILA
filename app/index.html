@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="LILA BLACK Player Journey Visualization Tool — Explore player movement, combat events, and heatmaps across game maps.">
+    <title>LILA BLACK — Player Journey Visualizer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-icon">◆</span>
+                <div>
+                    <h1>LILA BLACK</h1>
+                    <p class="subtitle">Player Journey Visualizer</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-content">
+            <!-- Map Selector -->
+            <section class="panel" id="panel-map">
+                <h3 class="panel-title"><span class="panel-icon">🗺️</span> Map</h3>
+                <div class="map-buttons" id="map-selector">
+                    <button class="map-btn active" data-map="AmbroseValley">Ambrose Valley</button>
+                    <button class="map-btn" data-map="GrandRift">Grand Rift</button>
+                    <button class="map-btn" data-map="Lockdown">Lockdown</button>
+                </div>
+            </section>
+
+            <!-- Date Filter -->
+            <section class="panel" id="panel-date">
+                <h3 class="panel-title"><span class="panel-icon">📅</span> Date</h3>
+                <select id="date-filter" class="select-input">
+                    <option value="all">All Dates</option>
+                    <option value="February_10">Feb 10</option>
+                    <option value="February_11">Feb 11</option>
+                    <option value="February_12">Feb 12</option>
+                    <option value="February_13">Feb 13</option>
+                    <option value="February_14">Feb 14</option>
+                </select>
+            </section>
+
+            <!-- Match Selector -->
+            <section class="panel" id="panel-match">
+                <h3 class="panel-title"><span class="panel-icon">⚔️</span> Match</h3>
+                <select id="match-selector" class="select-input">
+                    <option value="">Select a match...</option>
+                </select>
+                <div class="match-stats" id="match-stats" style="display:none;">
+                    <div class="stat"><span class="stat-label">👤 Humans</span><span class="stat-value" id="stat-humans">—</span></div>
+                    <div class="stat"><span class="stat-label">🤖 Bots</span><span class="stat-value" id="stat-bots">—</span></div>
+                    <div class="stat"><span class="stat-label">⏱ Duration</span><span class="stat-value" id="stat-duration">—</span></div>
+                </div>
+            </section>
+
+            <!-- Visibility -->
+            <section class="panel" id="panel-visibility">
+                <h3 class="panel-title"><span class="panel-icon">👁️</span> Visibility</h3>
+                <div class="toggle-group">
+                    <label class="toggle-row">
+                        <span><span class="dot dot-human"></span> Human Players</span>
+                        <input type="checkbox" id="toggle-humans" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <label class="toggle-row">
+                        <span><span class="dot dot-bot"></span> Bots</span>
+                        <input type="checkbox" id="toggle-bots" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <label class="toggle-row">
+                        <span>🔴 Trails</span>
+                        <input type="checkbox" id="toggle-trails" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <label class="toggle-row">
+                        <span>📍 Events</span>
+                        <input type="checkbox" id="toggle-events" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </section>
+
+            <!-- Heatmap -->
+            <section class="panel" id="panel-heatmap">
+                <h3 class="panel-title"><span class="panel-icon">🔥</span> Heatmap Overlay</h3>
+                <div class="heatmap-buttons" id="heatmap-selector">
+                    <button class="heatmap-btn active" data-heatmap="none">Off</button>
+                    <button class="heatmap-btn" data-heatmap="kills">Kills</button>
+                    <button class="heatmap-btn" data-heatmap="deaths">Deaths</button>
+                    <button class="heatmap-btn" data-heatmap="traffic">Traffic</button>
+                </div>
+                <div class="heatmap-legend" id="heatmap-legend" style="display:none;">
+                    <div class="legend-gradient"></div>
+                    <div class="legend-labels"><span>Low</span><span>High</span></div>
+                </div>
+            </section>
+
+            <!-- Event Legend -->
+            <section class="panel" id="panel-legend">
+                <h3 class="panel-title"><span class="panel-icon">📋</span> Event Legend</h3>
+                <div class="legend-items">
+                    <div class="legend-item"><span class="legend-marker" style="background: #ef4444;">✕</span> Kill</div>
+                    <div class="legend-item"><span class="legend-marker" style="background: #f97316;">☠</span> Killed</div>
+                    <div class="legend-item"><span class="legend-marker" style="background: #a855f7;">⚡</span> Storm Death</div>
+                    <div class="legend-item"><span class="legend-marker" style="background: #eab308;">◆</span> Loot</div>
+                </div>
+            </section>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content">
+        <!-- Top Bar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button id="sidebar-toggle" class="icon-btn" title="Toggle Sidebar">☰</button>
+                <span class="breadcrumb" id="breadcrumb">AmbroseValley</span>
+            </div>
+            <div class="topbar-right">
+                <span class="event-counter" id="event-counter"></span>
+            </div>
+        </header>
+
+        <!-- Canvas Container -->
+        <div id="canvas-container" class="canvas-container">
+            <canvas id="map-canvas"></canvas>
+            <canvas id="overlay-canvas"></canvas>
+            <canvas id="heatmap-canvas"></canvas>
+            <div id="tooltip" class="tooltip" style="display:none;"></div>
+            <div id="empty-state" class="empty-state">
+                <div class="empty-icon">🗺️</div>
+                <h2>Select a Match</h2>
+                <p>Choose a map and match from the sidebar to visualize player journeys</p>
+            </div>
+        </div>
+
+        <!-- Timeline Bar -->
+        <div id="timeline-bar" class="timeline-bar" style="display:none;">
+            <div class="timeline-controls">
+                <button id="btn-play" class="play-btn" title="Play/Pause">▶</button>
+                <div class="timeline-slider-wrap">
+                    <input type="range" id="timeline-slider" class="timeline-slider" min="0" max="1000" value="0">
+                    <div class="timeline-time">
+                        <span id="time-current">0:00</span>
+                        <span id="time-total">0:00</span>
+                    </div>
+                </div>
+                <div class="speed-controls">
+                    <button class="speed-btn active" data-speed="1">1×</button>
+                    <button class="speed-btn" data-speed="2">2×</button>
+                    <button class="speed-btn" data-speed="4">4×</button>
+                    <button class="speed-btn" data-speed="8">8×</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>

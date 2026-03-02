@@ -1,0 +1,17 @@
+# Dependencies
+.venv/
+node_modules/
+
+# Data (too large for git)
+player_data/
+player_data.zip
+app/public/data/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
